@@ -26,6 +26,20 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
+    const usersCollection = client.db("ToDoApp").collection("users");
+
+    app.post("/users", async (req, res) => {
+      const newUser = req.body;
+      const query = { email: newUser.email };
+      const user = await usersCollection.findOne(query); // check if user already exists
+      if (user) {
+        res.status(400).send("User already exists");
+        return; // stop the function
+      }
+      const result = await usersCollection.insertOne(newUser);
+      res.json(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
