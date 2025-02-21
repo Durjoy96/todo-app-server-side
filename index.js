@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
 const port = 5000;
 require("dotenv").config();
@@ -53,6 +53,18 @@ async function run() {
     app.get("/tasks", async (req, res) => {
       const tasks = await tasksCollection.find().toArray();
       res.send(tasks);
+    });
+
+    //update a task category
+    app.put("/tasks/:id", async (req, res) => {
+      const id = req.params.id;
+      const updatedTask = req.body;
+      delete updatedTask._id; // Remove the _id field
+      console.log(updatedTask);
+      const query = { _id: new ObjectId(id) };
+      const update = { $set: updatedTask };
+      const result = await tasksCollection.updateOne(query, update);
+      res.send(result);
     });
 
     // Send a ping to confirm a successful connection
