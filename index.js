@@ -27,7 +27,9 @@ async function run() {
     await client.connect();
 
     const usersCollection = client.db("ToDoApp").collection("users");
+    const tasksCollection = client.db("ToDoApp").collection("tasks");
 
+    // add a new user
     app.post("/users", async (req, res) => {
       const newUser = req.body;
       const query = { email: newUser.email };
@@ -38,6 +40,19 @@ async function run() {
       }
       const result = await usersCollection.insertOne(newUser);
       res.json(result);
+    });
+
+    //add a new task
+    app.post("/tasks", async (req, res) => {
+      const newTask = req.body;
+      const result = await tasksCollection.insertOne(newTask);
+      res.json(result);
+    });
+
+    //get all tasks
+    app.get("/tasks", async (req, res) => {
+      const tasks = await tasksCollection.find().toArray();
+      res.send(tasks);
     });
 
     // Send a ping to confirm a successful connection
