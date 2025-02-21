@@ -51,7 +51,10 @@ async function run() {
 
     //get all tasks
     app.get("/tasks", async (req, res) => {
-      const tasks = await tasksCollection.find().toArray();
+      const email = req.query.email;
+      const query = { user_email: email };
+      console.log(query);
+      const tasks = await tasksCollection.find(query).toArray();
       res.send(tasks);
     });
 
